@@ -120,7 +120,18 @@ func main() {
 			}
 
 			/* Create the message and send to client */
-			reply := make([]byte, 5e6) // ("I hear ya fashizzle!")
+			//  ("I hear ya fashizzle!")
+			// bisect to find how much go-wolfssl can write:
+			//reply := make([]byte, 5e6) // WolfSSL_write failed
+			//reply := make([]byte, 1e6)  // WolfSSL_write failed
+			//reply := make([]byte, 1e4) // write ok.
+			//reply := make([]byte, 1e5) // WolfSSL_write failed
+			//reply := make([]byte, 50000) // write ok
+			//reply := make([]byte, 75000) // failed
+			//reply := make([]byte, 65536) //  WolfSSL_write failed
+			//reply := make([]byte, 65535) // okay
+			reply := make([]byte, 65536) // WolfSSL_write cannot manage this.
+
 			sz := uintptr(len(reply))
 
 			ret = wolfSSL.WolfSSL_write(ssl, reply, sz)

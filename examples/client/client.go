@@ -60,21 +60,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	/* Load server certificates into WOLFSSL_CTX */
-	/*
-		ret := wolfSSL.WolfSSL_CTX_use_certificate_file(ctx, CERT_FILE, wolfSSL.SSL_FILETYPE_PEM)
-		if ret != wolfSSL.WOLFSSL_SUCCESS {
-			fmt.Println("Error: WolfSSL_CTX_use_certificate Failed")
-			os.Exit(1)
-		}
-	*/
-	/* Load server key into WOLFSSL_CTX */
-	/*	ret = wolfSSL.WolfSSL_CTX_use_PrivateKey_file(ctx, KEY_FILE, wolfSSL.SSL_FILETYPE_PEM)
-		if ret != wolfSSL.WOLFSSL_SUCCESS {
-			fmt.Println("Error: WolfSSL_CTX_use_PrivateKey Failed")
-			os.Exit(1)
-		}
-	*/
 	/* Create a WOLFSSL object */
 	ssl := wolfSSL.WolfSSL_new(ctx)
 	if ssl == nil {
@@ -121,12 +106,12 @@ func main() {
 	}
 
 	/* Recieve then print the message from server */
-	buf := make([]byte, 256)
-	ret = wolfSSL.WolfSSL_read(ssl, buf, 256)
+	buf := make([]byte, 5e6)
+	ret = wolfSSL.WolfSSL_read(ssl, buf, uintptr(len(buf)))
 	if ret == -1 {
 		fmt.Println(" wolfSSL_read failed ")
 	} else {
-		fmt.Println("Server says : ", string(buf))
+		fmt.Printf("Server reply was %v bytes long\n", len(buf))
 	}
 
 	/* Shutdown wolfSSL */
